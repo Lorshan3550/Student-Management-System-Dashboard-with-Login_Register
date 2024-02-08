@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const NewStudent = () => {
@@ -8,6 +8,28 @@ const NewStudent = () => {
   const [age, setAge] = useState("");
   const [image, setImage] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+
+  useEffect(() => {
+    let timer;
+
+    if (isSubmitted) {
+      // Show success message
+      setSuccessMessage('Form Submitted Successfully');
+
+      // Set timeout to hide the success message after 2 minutes
+      timer = setTimeout(() => {
+        setIsSubmitted(false);
+        setSuccessMessage('');
+      }, 120000); // 2 minutes in milliseconds
+    }
+
+    // Cleanup function
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isSubmitted]);
 
 
   const handleSubmit = async (e) => {
@@ -38,7 +60,7 @@ const NewStudent = () => {
   };
 
 
-  const successMessage = <div> Form submitted Successfully</div> 
+  // const successMessage = <div> Form submitted Successfully</div> 
 
   return (
     <div className="max-w-md mx-auto mt-10">

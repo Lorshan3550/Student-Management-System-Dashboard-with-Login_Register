@@ -3,25 +3,29 @@ import { useState, useEffect } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import path from "path";
+import PropTypes from 'prop-types';
+
 
 const statuses = ["Active", "Inactive"];
 // const currentFilePath = new URL('../../../backend/uploads/', import.meta.url).pathname;
 
-const TableRow = ({ data   }) => {
+const TableRow = ({ data  , fetchData }) => {
   // const handleDelete1 = () => {
   //   onDelete(data.id);
   // };
+  const [info , setInfo] = useState(data)
 
-  const handleDelete = async (data) => {
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/student/${data.id}`, {
+      const response = await fetch(`http://localhost:3000/student/${info.id}`, {
         method: "DELETE",
       });
       if (response.ok) {
-        //
+        fetchData()
         console.log("Success")
       } else {
         console.log(data.id)
+        console.log(info)
         console.log("Failed to delete student");
       }
     } catch (error) {
@@ -63,7 +67,17 @@ const TableRow = ({ data   }) => {
   );
 };
 
-const Table = ({ data }) => (
+// TableRow.propTypes = {
+//   data: PropTypes.shape({
+//     id: PropTypes.string.isRequired,
+//     firstName: PropTypes.string.isRequired,
+//     lastName: PropTypes.string.isRequired,
+//     age: PropTypes.number.isRequired,
+//     status: PropTypes.oneOf(["Active", "Inactive"]).isRequired,
+//   }).isRequired,
+// };
+
+const Table = ({ data, fetchData }) => (
   <table className="w-full table-auto">
     <thead>
       <tr>
@@ -79,11 +93,24 @@ const Table = ({ data }) => (
     </thead>
     <tbody>
       {data.map((row) => (
-        <TableRow key={row.id} data={row} />
+        <TableRow key={String(row.id)} data={row} fetchData={fetchData} />
       ))}
     </tbody>
   </table>
 );
+
+// Table.propTypes = {
+//   data: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//       firstName: PropTypes.string.isRequired,
+//       lastName: PropTypes.string.isRequired,
+//       age: PropTypes.number.isRequired,
+//       status: PropTypes.oneOf(["Active", "Inactive"]).isRequired,
+//       // Add more PropTypes validations as needed
+//     })
+//   ).isRequired,
+// };
 
 const StudentTable = () => {
   const [rows, setRows] = useState([
@@ -140,7 +167,7 @@ const StudentTable = () => {
         const data = await response.json();
         const formattedStudents = data.students.map((student) => {
           return {
-            id: student.studentId,
+            id: Number(student.studentId),
             avatar: `../../../backend/uploads/${student.image}`,
             firstName: student.firstName,
             lastName: student.lastName,
@@ -167,7 +194,7 @@ const StudentTable = () => {
 
   return (
     <div className="container mx-auto">
-      <Table data={rows}  />
+      <Table data={rows} fetchData={fetchData} />
     </div>
   );
 };
