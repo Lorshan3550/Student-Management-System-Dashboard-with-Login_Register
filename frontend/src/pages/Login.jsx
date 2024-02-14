@@ -26,8 +26,8 @@ const LoginPage = () => {
       auth: true,
     };
     dispatch(userAdded(obj));
+    Cookies.set("auth", true); // Set a cookie to store the authentication state
     window.open("http://localhost:3000/auth/google/callback", "_self");
-    
   };
 
   axios.defaults.withCredentials = true;
@@ -46,6 +46,23 @@ const LoginPage = () => {
         }),
       });
       if (response.ok) {
+        // const res = await axios.get("http://localhost:3000/role/", {userName : email}, {
+        //   withCredentials: true,
+        // })
+        // console.log(res)
+
+        // Login successful
+        const userData = await response.json();
+        // Dispatch user data to Redux store
+        const obj = {
+          name: userData.Name ? userData.Name : "User",
+          image:
+            "https://w7.pngwing.com/pngs/81/570/png-transparent-profile-logo-computer-icons-user-user-blue-heroes-logo-thumbnail.png",
+          role: userData.Role,          
+        };
+        dispatch(userAdded(obj));
+        console.log("Login successful");
+        console.log("User data:", userData);
         // Login successful
         console.log("response", response);
         // const obj = {
@@ -68,7 +85,7 @@ const LoginPage = () => {
         setIsLoginFailed(true);
         const data = await response.json();
         // Handle error, maybe show error message to the user
-        console.error(data.error || "Failed to log in user");
+        console.log(data.error || "Failed to log in user");
       }
 
       //   axios.post('http://localhost:3000/login', {userName : email, password})

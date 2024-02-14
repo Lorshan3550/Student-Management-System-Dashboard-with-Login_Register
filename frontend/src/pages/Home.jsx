@@ -12,6 +12,8 @@ const Home = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const user = useSelector((state) => state.users)
+  const isAuthenticated = Cookies.get("auth"); // Retrieve the authentication state from the cookie
+
 
 
   const getUser = async () => {
@@ -37,14 +39,13 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // if(user.auth){
-    //   console.log(user.auth)
-    //   getUser()
-    // }
+    if (isAuthenticated) {
+      getUser();
+    }
 
-    getUser()
+    // getUser()
     
-  },[])
+  },[isAuthenticated])
 
   //   useEffect(() => {
   //     const accessToken = Cookies.get('accessToken');

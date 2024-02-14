@@ -30,8 +30,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-
-
 const loginUser = async (req, res) => {
   try {
     // Extract user data from request body
@@ -96,7 +94,7 @@ const loginUser = async (req, res) => {
     //   secure: true,
     //   sameSite: "None",
     // });
-    res.status(200).json({ Login : "true", Role : user.userType });
+    res.status(200).json({ Login: true, Role: user.userType, Name: user.userName.split("@")[0] });
 
     // res.sendStatus(200);
   } catch (error) {
@@ -105,6 +103,14 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUserRole = async (req, res) => {
+  const { userName } = req.body;
+  const user = await User.findOne({ userName });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.status(200).json({Role : user.userType})
+};
 const logoutUser = (req, res) => {
   // You may want to handle token invalidation or expiration on the client side
   res.status(200).json({ message: "Logout successful" });
@@ -115,4 +121,4 @@ const navigateHome = (req, res) => {
   res.status(200).json({ message: "came to home page" });
 };
 
-module.exports = { registerUser, loginUser, logoutUser , navigateHome};
+module.exports = { registerUser, loginUser, logoutUser, navigateHome , getUserRole };
