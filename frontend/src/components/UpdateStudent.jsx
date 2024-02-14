@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"
+import { userAdded } from "../pages/userSlice"
 const UpdateStudent = () => {
   const { Id } = useParams(); // Get the student Id from the URL params
   const [firstName, setFirstName] = useState("");
@@ -8,6 +10,9 @@ const UpdateStudent = () => {
   const [age, setAge] = useState("");
   const [image, setImage] = useState(null);
   const [status, setStatus] = useState("Active"); // Added status state
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const user = useSelector((state) => state.users)
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -17,22 +22,33 @@ const UpdateStudent = () => {
         });
         if (response.ok) {
           const result = await response.json();
-          console.log(result.student)
-          const existStudent = result.student
-          setFirstName(existStudent.firstName)
-          setLastName(existStudent.lastName)
-          setAge(existStudent.age)
-          setStatus(existStudent.status)
+          // console.log(result.student);
+          const existStudent = result.student;
+          setFirstName(existStudent.firstName);
+          setLastName(existStudent.lastName);
+          setAge(existStudent.age);
+          setStatus(existStudent.status);
         } else {
-          console.error("Failed to fetch student");
+          console.log("Failed to fetch student");
         }
       } catch (error) {
-        console.error("Error fetching student:", error);
+        console.log("Error fetching student:", error);
       }
     };
 
     fetchStudent();
-  }, [Id]); // Fetch student data when the Id changes
+
+    if(user.role === 'Admin'){
+      setIsAuthorized(true)
+    }
+
+    // Check if Authorization cookie is present
+    // const authorizationCookie = document.cookie.includes("Authorization");
+    // setIsAuthorized(authorizationCookie);
+    
+  }, [Id,user]); // Fetch student data when the Id changes
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,14 +77,9 @@ const UpdateStudent = () => {
     }
   };
 
-
-  
-
   return (
     <div className="max-w-md mx-auto mt-7">
-      <h1 className=" font-bold flex justify-center">
-        Update Student Details
-      </h1>
+      <h1 className=" font-bold flex justify-center">Update Student Details</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -137,8 +148,11 @@ const UpdateStudent = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="status" className="block text-gray-700 text-sm font-bold mb-2">
+        {/* <div className="mb-4">
+          <label
+            htmlFor="status"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
             Status
           </label>
           <select
@@ -150,7 +164,26 @@ const UpdateStudent = () => {
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-        </div>
+        </div> */}
+        {isAuthorized && (
+          <div className="mb-4">
+            <label
+              htmlFor="status"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Status
+            </label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <button
             type="submit"

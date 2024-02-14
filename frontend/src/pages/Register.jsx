@@ -10,6 +10,10 @@ const RegisterPage = () => {
   const [userType, setUserType] = useState("User");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const signupwithgoogle = ()=>{
+    window.open("http://localhost:3000/auth/google/callback","_self")
+}
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -149,7 +153,7 @@ const RegisterPage = () => {
         <p>Or sign up with:</p>
         <button
           type="button"
-          onClick={() => alert("Sign up with Google")}
+          onClick={signupwithgoogle}
           className="mt-2 inline-flex gap-2 items-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           <FaGoogle />

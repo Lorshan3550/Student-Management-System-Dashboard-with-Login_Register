@@ -11,14 +11,21 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
     minlength: 8,
   },
   userType: {
     type: String,
     enum: ['Admin', 'User'], // Only accept 'Admin' or 'User' values
-    required: true,
+    default : 'Admin'
   },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse : true
+  },
+  displayName:String,
+  image: String
+  
 });
 
 // Create the User model

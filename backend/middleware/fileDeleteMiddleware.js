@@ -6,6 +6,11 @@ const deleteImage = async (req, res, next) => {
 
   try {
     const { Id } = req.params;
+    
+
+    // if(!req.role){
+    //   next()
+    // }
     const promises = fileExtensions.map((ext) => {
       const imagePath = path.join(__dirname, "../uploads/", `${Id}.${ext}`);
       // Check if the file exists
@@ -14,7 +19,7 @@ const deleteImage = async (req, res, next) => {
         return new Promise((resolve, reject) => {
           fs.unlink(imagePath, (error) => {
             if (error) {
-              console.error("Error deleting image:", error);
+              console.log("Error deleting image:", error);
               reject(error);
             }
             resolve();
@@ -27,8 +32,8 @@ const deleteImage = async (req, res, next) => {
     // Call next() only once after all file deletion operations are completed
     next();
   } catch (error) {
-    console.error(error);
-    next(error); // Pass error to the error handling middleware
+    console.log(error);
+    next(); // Pass error to the error handling middleware
   }
 };
 

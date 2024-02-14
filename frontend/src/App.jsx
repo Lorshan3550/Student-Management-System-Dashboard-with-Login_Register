@@ -8,8 +8,10 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NewStudent from "./components/NewStudent";
 import UpdateStudent from "./components/UpdateStudent";
+import { useState } from "react";
 
 export default function App() {
+  
   const Layout = () => {
     return (
       <div className="flex flex-col min-h-screen">

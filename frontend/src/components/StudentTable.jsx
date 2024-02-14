@@ -3,17 +3,24 @@ import { useState, useEffect } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import path from "path";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+// import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from "react-redux"
+import { userAdded } from "../pages/userSlice"
+import {selectUser} from "../pages/userSlice"
 
 
 const statuses = ["Active", "Inactive"];
 // const currentFilePath = new URL('../../../backend/uploads/', import.meta.url).pathname;
 
-const TableRow = ({ data  , fetchData }) => {
+const TableRow = ({ data, fetchData }) => {
+  
+  // console.log("user in student", user)
+
   // const handleDelete1 = () => {
   //   onDelete(data.id);
   // };
-  const [info , setInfo] = useState(data)
+  const [info, setInfo] = useState(data);
 
   const handleDelete = async () => {
     try {
@@ -21,19 +28,17 @@ const TableRow = ({ data  , fetchData }) => {
         method: "DELETE",
       });
       if (response.ok) {
-        fetchData()
-        console.log("Success")
+        fetchData();
+        console.log("Success");
       } else {
-        console.log(data.id)
-        console.log(info)
+        console.log(data.id);
+        console.log(info);
         console.log("Failed to delete student");
       }
     } catch (error) {
       console.log("Error deleting student:", error);
     }
   };
-
-  
 
   return (
     <tr>
@@ -77,27 +82,31 @@ const TableRow = ({ data  , fetchData }) => {
 //   }).isRequired,
 // };
 
-const Table = ({ data, fetchData }) => (
-  <table className="w-full table-auto">
-    <thead>
-      <tr>
-        <th className="px-4 py-2">ID</th>
-        <th className="px-4 py-2">Avatar</th>
-        <th className="px-4 py-2">First Name</th>
-        <th className="px-4 py-2">Last Name</th>
-        <th className="px-4 py-2">Age</th>
-        <th className="px-4 py-2">Status</th>
-        <th className="px-4 py-2">Edit</th>
-        <th className="px-4 py-2">Delete</th>
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((row) => (
-        <TableRow key={String(row.id)} data={row} fetchData={fetchData} />
-      ))}
-    </tbody>
-  </table>
-);
+const Table = ({ data, fetchData }) => {
+  // const user = useSelector((state) => state.users)
+  // console.log(user)
+  return (
+    <table className="w-full table-auto">
+      <thead>
+        <tr>
+          <th className="px-4 py-2">ID</th>
+          <th className="px-4 py-2">Avatar</th>
+          <th className="px-4 py-2">First Name</th>
+          <th className="px-4 py-2">Last Name</th>
+          <th className="px-4 py-2">Age</th>
+          <th className="px-4 py-2">Status</th>
+          <th className="px-4 py-2">Edit</th>
+          <th className="px-4 py-2">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <TableRow key={String(row.id)} data={row} fetchData={fetchData} />
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 // Table.propTypes = {
 //   data: PropTypes.arrayOf(
@@ -161,9 +170,11 @@ const StudentTable = () => {
   // }, []);
 
   const fetchData = async () => {
+    // const accessToken = Cookies.get('accessToken');
     try {
       const response = await fetch("http://localhost:3000/students/");
       if (response.ok) {
+        // console.log("Access token", accessToken)
         const data = await response.json();
         const formattedStudents = data.students.map((student) => {
           return {
@@ -177,20 +188,16 @@ const StudentTable = () => {
         });
         setRows(formattedStudents);
       } else {
-        console.error("Failed to fetch students");
+        console.log("Failed to fetch students");
       }
     } catch (error) {
-      console.error("Error fetching students:", error);
+      console.log("Error fetching students:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, [rows]);
-
-  
-
-  
 
   return (
     <div className="container mx-auto">

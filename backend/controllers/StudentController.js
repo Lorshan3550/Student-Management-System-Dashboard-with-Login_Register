@@ -7,14 +7,16 @@ const getAllStudents = async (req, res) => {
   let students;
   try {
     students = await Student.find();
+
+    if (!students) {
+      res.status(404).json({ message: "No students Found" });
+    }
   } catch (error) {
-    console.error("Error finding students:", error);
+    console.log("Error finding students:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 
-  if (!students) {
-    res.status(404).json({ message: "No students Found" });
-  }
+  
 
   // Respond with them
   res.json({ students });
@@ -26,7 +28,7 @@ const getStudent = async (req, res) => {
   try {
     student = await Student.findOne({ studentId : Id});
   } catch (error) {
-    console.error("Error finding students:", error);
+    console.log("Error finding students:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 
@@ -59,7 +61,7 @@ const createStudent = async (req, res) => {
       img: req.file,
     });
   } catch (error) {
-    console.error("Error creating student:", error);
+    console.log("Error creating student:", error);
     res.status(500).json({ error: "Failed to create student" });
   }
 };
@@ -101,6 +103,16 @@ const deleteStudent = async (req, res) => {
     // Extract the Id parameter from the request
     const { Id } = req.params;
 
+    
+
+    // if(req.role != "Admin"){
+    //   return res.status(401).json({ error: "Not Authorized to delete" });
+    // }
+
+
+
+
+
     // Find and delete the student based on the Id
     const deletedStudent = await Student.findOneAndDelete({ studentId: Id });
 
@@ -115,7 +127,7 @@ const deleteStudent = async (req, res) => {
       .status(200)
       .json({ message: "Student deleted successfully", deletedStudent });
   } catch (error) {
-    console.log("Error deleting student:", error);
+    console.log("Error deleting student:",error);
     res.status(500).json({ error: "Failed to delete student" });
   }
 };
